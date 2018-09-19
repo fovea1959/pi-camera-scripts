@@ -64,13 +64,25 @@ class MyHandler(SimpleHTTPRequestHandler):
             local6 = f.tail(10)
             f.close()
 
+            image_files = os.listdir('.')
+            image_files = [f for f in image_files if os.path.isfile(f)]
+            image_files.sort(reverse=True)
+
             body = "<html><h1>Reboots</h1><pre>"
-            for l in local7:
-                body += l
+            body += ''.join(local7)
             body += "</pre><h1>Camera</h1><pre>"
-            for l in local6:
-                body += l
-            body += "</pre><h1>Last shot</h1>"
+            body += ''.join(local6)
+            body += "</pre><h1>Last shots</h1>"
+            for f in image_files[:9]:
+                body += ''.join( [
+                    "<a href=\"",
+                    f,
+                    "\">",
+                    f,
+                    "</a> ",
+                    str(os.stat(f).st_size),
+                    "<br>\n"
+                    ] )
             body += "</html>"
             self.send_response(200)
             self.send_header("Content-type", "text/html")
