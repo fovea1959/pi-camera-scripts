@@ -65,28 +65,30 @@ class MyHandler(SimpleHTTPRequestHandler):
             f.close()
 
             image_files = os.listdir('.')
-            image_files = [f for f in image_files if os.path.isfile(f)]
+            image_files = [f for f in image_files if f.endswith('.jpg') and os.path.isfile(f)]
             image_files.sort(reverse=True)
 
-            body = "<html><h1>Reboots</h1><pre>"
+            body = '<html><table style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"><tr><td style="width: 25%" valign="top">\n<h1>Reboots</h1><pre>\n'
             body += ''.join(local7)
-            body += "</pre><h1>Camera</h1><pre>"
+            body += '</pre>\n<h1>Camera</h1><pre>\n'
             body += ''.join(local6)
-            body += "</pre><h1>Last shots</h1>"
+            body += '</pre>\n<h1>Last shots</h1>\n'
             for f in image_files[:9]:
                 body += ''.join( [
-                    "<a href=\"",
+                    '<a href="',
                     f,
-                    "\">",
+                    '\">',
                     f,
-                    "</a> ",
+                    '</a> ',
                     str(os.stat(f).st_size),
-                    "<br>\n"
+                    '<br>\n'
                     ] )
-            body += "</html>"
+            body += '</td>\n<td style="width: 75%">'
+            body += '<img src="' + image_files[0] + '" style="display:block; width:100%; height:auto;"></img>'
+            body += '</td>\n</tr></table></html>'
             self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.send_header("Content-Length", str(len(body)))
+            self.send_header('Content-type', 'text/html')
+            self.send_header('Content-Length', str(len(body)))
             self.end_headers()
             self.wfile.write(body)
             return
@@ -98,17 +100,17 @@ os.chdir('/home/pi/timelapse/01/');
 
 HandlerClass = MyHandler
 ServerClass  = BaseHTTPServer.HTTPServer
-Protocol     = "HTTP/1.0"
+Protocol     = 'HTTP/1.0'
 
 if sys.argv[1:]:
     port = int(sys.argv[1])
 else:
     port = 8000
-server_address = ('127.0.0.1', port)
+server_address = ('', port)
 
 HandlerClass.protocol_version = Protocol
 httpd = ServerClass(server_address, HandlerClass)
 
 sa = httpd.socket.getsockname()
-print "Serving HTTP on", sa[0], "port", sa[1], "..."
+print 'Serving HTTP on', sa[0], 'port', sa[1], '...'
 httpd.serve_forever()
