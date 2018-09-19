@@ -1,0 +1,31 @@
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+@reboot logger -p LOCAL7.INFO reboot logged from root crontab
+@reboot $HOME/wakeup_enable.py
+# reboot hourly to make sure camera is ok
+27 * * * * $HOME/cron_reboot.sh
+# shutdown at 1800 on weekdays
+2 18 * * 1-5 $HOME/cron_shutdown.sh
+# shutdown at 0700 on sat and sun
+2 7 * * 0,6 $HOME/cron_shutdown.sh
+*/15 * * * * $HOME/pijuice_log.sh

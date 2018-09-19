@@ -1,0 +1,17 @@
+#!/bin/bash -vx
+
+DIR=$HOME/timelapse/01
+COUNTFILE=$DIR/counter
+
+mkdir -p $DIR
+touch $COUNTFILE
+VAR=`cat $COUNTFILE`
+VAR=$(($VAR + 1))
+echo $VAR > $COUNTFILE
+VAR=`printf "%7.7d\n" $VAR`
+TS=`date --utc +%Y%m%d-%H%M%S`
+FN=$DIR/$SUBDIR/${VAR}_${TS}.jpg
+logger -p LOCAL6.info taking $FN
+raspistill --nopreview --output $FN
+RV=$?
+logger -p LOCAL6.info took $FN status $RV
