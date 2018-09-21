@@ -23,9 +23,11 @@
 @reboot logger -p LOCAL7.INFO reboot logged from root crontab
 @reboot $HOME/wakeup_enable.py
 # reboot hourly to make sure camera is ok
-27 * * * * $HOME/cron_reboot.sh
+31 * * * * $HOME/cron_reboot.sh
 # shutdown at 1800 on weekdays
 2 18 * * 1-5 $HOME/cron_shutdown.sh
-# shutdown at 0700 on sat and sun
-2 7 * * 0,6 $HOME/cron_shutdown.sh
+# shutdown at 1200 on sun
+2 12 * * 0 $HOME/cron_shutdown.sh
+# shutdown at 0700 on sun
+2 7 * * 0 $HOME/cron_shutdown.sh
 */15 * * * * $HOME/pijuice_log.sh
