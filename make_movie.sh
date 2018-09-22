@@ -1,6 +1,7 @@
 #!/bin/bash
 
-./filter_symlinks.py --input-directory ~/3620-pi-camera-1/timelapse/01 --output o --filter-file filter
+#./filter_symlinks.py --input-directory ~/3620-pi-camera-1/timelapse/01 --symlink o --resize resized --filter-file filter
+./filter_symlinks.py --input-directory ~/3620-pi-camera-1/timelapse/01 --resize resized --filter-file filter
 rv=$?
 
 if [[ $rv -eq 0 ]]; then
