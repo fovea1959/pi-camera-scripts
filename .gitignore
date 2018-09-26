@@ -1,2 +1,6 @@
-movie.*
+*.mpg
+*.avi
+*.mkv
 o/
+resized/
+script.sh

@@ -41,7 +41,7 @@ if __name__ == '__main__':
     parser.add_argument('--symlink-directory', help='symlink directory', type = lambda x : is_valid_directory(parser, x))
     parser.add_argument('--resize-directory', help='resize directory', type = lambda x : is_valid_directory(parser, x))
     parser.add_argument('--filter-file', required=True, help='filter file', type = lambda x : is_existing_file(parser, x))
-    parser.add_argument('--script', help='file to put shell script into')
+    parser.add_argument('--script', required=True, help='file to put shell script into')
 
     parser.add_argument('--verbose', action='count', help='crank up logging')
 
@@ -130,28 +130,20 @@ if __name__ == '__main__':
                     if os.path.exists(outfilename):
                         logging.info ('%s already exists, skipping conversion', outfilename)
                     else:
-                            legend = '  ' + d[:4] + '.' + d[4:6] + '.' + d[6:] + '  '
-                            undercolor = '#00000080'
-                            if sf:
-                                legend = '"' + legend + '"'
-                                undercolor = '"' + undercolor + '"'
+                            date_legend = '" ' + d[:4] + '.' + d[4:6] + '.' + d[6:] + ' "'
+                            undercolor = '"#00000080"'
                             cmd = [
                                 'convert', inpath, 
                                 '-resize', '1280x720', 
+                                '-fill',  'white',   '-undercolor',  undercolor , 
                                 '-pointsize', '72', 
-                                '-fill',  'white',   '-undercolor',  undercolor , '-gravity', 'South', '-annotate', '+0+5', legend, 
+                                '-gravity', 'South', '-annotate', '+0+5', date_legend, 
+                                '-pointsize', '36', 
+                                '-gravity', 'SouthWest', '-annotate', '+0+5', '{:05d}'.format(i), 
                                 outfilename
                             ]
-                            if sf:
-                                sf.write(' '.join(cmd))
-                                sf.write('\n');
-                            else:
-                                try:
-                                    logging.info ('running %s', ' '.join(cmd))
-                                    r = subprocess.check_call (cmd, stderr=subprocess.STDOUT)
-                                except subprocess.CalledProcessError as exc:
-                                    logging.critical ("imagemagick failed: %d %s", exc.returncode, exc.output)
-                                    raise
+                            sf.write(' '.join(cmd))
+                            sf.write('\n')
 
             else:
                 logging.info ('%s no match', infile)
