@@ -94,13 +94,15 @@ if __name__ == '__main__':
 
     last_date = None
     for infile in sorted(os.listdir(args.input_directory)):
-        m = re.match(r'^(\d+)_(\d{8})-.*\.jpg$', infile)
+        m = re.match(r'^(\d+)_(\d{8})-(\d{2})(\d{2})\d{2}\.jpg$', infile)
         if not m:
             logging.info ('skipping %s, does not look like an image file', infile)
             continue
         else:
             i = int(m.group(1))
             d = m.group(2)
+            h = m.group(3)
+            m = m.group(4)
             mmt = None
             for mt in match_tuples:
                 logging.debug ('checking %s against %s %s', i, str(mt), infile)
@@ -123,27 +125,31 @@ if __name__ == '__main__':
                     if last_date is not None and d < last_date:
                         # clock regressed
                         d = last_date
+                        ts = None
                     else:
                         last_date = d
+                        ts = str(int(h)-4) + ":" + str(m)
                     outfilename = os.path.join(args.resize_directory, infile);
                     outfilename = os.path.splitext(outfilename)[0] + '.png'
                     if os.path.exists(outfilename):
                         logging.info ('%s already exists, skipping conversion', outfilename)
                     else:
-                            date_legend = '" ' + d[:4] + '.' + d[4:6] + '.' + d[6:] + ' "'
-                            undercolor = '"#00000080"'
-                            cmd = [
-                                'convert', inpath, 
-                                '-resize', '1280x720', 
-                                '-fill',  'white',   '-undercolor',  undercolor , 
-                                '-pointsize', '72', 
-                                '-gravity', 'South', '-annotate', '+0+5', date_legend, 
-                                '-pointsize', '36', 
-                                '-gravity', 'SouthWest', '-annotate', '+0+5', '{:05d}'.format(i), 
-                                outfilename
-                            ]
-                            sf.write(' '.join(cmd))
-                            sf.write('\n')
+                        date_legend = '" ' + d[:4] + '.' + d[4:6] + '.' + d[6:] + ' "'
+                        undercolor = '"#00000080"'
+                        cmd = [
+                            'convert', inpath, 
+                            '-resize', '1280x720', 
+                            '-fill',  'white',   '-undercolor',  undercolor , 
+                            '-pointsize', '72', 
+                            '-gravity', 'South', '-annotate', '+0+5', date_legend, 
+                            '-pointsize', '36', 
+                            '-gravity', 'SouthWest', '-annotate', '+0+5', '{:05d}'.format(i), 
+                        ]
+                        if ts is not None:
+                            cmd.extend([ '-gravity', 'SouthEast', '-annotate', '+0+5', ts ])
+                        cmd.append(outfilename)
+                        sf.write(' '.join(cmd))
+                        sf.write('\n')
 
             else:
                 logging.info ('%s no match', infile)
