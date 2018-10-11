@@ -3,4 +3,6 @@
 *.mkv
 o/
 resized/
+weekly/
 script.sh
+tmp.*.sh
