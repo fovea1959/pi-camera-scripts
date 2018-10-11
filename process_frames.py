@@ -4,6 +4,45 @@
 
 import os, argparse, traceback
 
+class FrameSelector(object):
+
+    def __init__ (self, infile):
+        self.match_tuples = []
+        with open(args.filter_file, 'r') as ff:
+            for line in ff:
+                line = re.sub (r'#.*$', '', line.strip())
+                line = line.strip()
+                if line != '':
+                    m = re.match (r'^\s*(\d+)\s*(-?)\s*(\d*)\s*(.*)\s*$', line)
+                    if not m:
+                        logging.warn ('unable to parse file %s line "%s"', infile, line)
+                        continue
+                    m1 = m2 = int(m.group(1))
+                    if m.group(2) != '':
+                        if m.group(3) == '':
+                            m2 = None
+                        else:
+                            m2 = int(m.group(3))
+                    m3 = m.group(4)
+                    self.match_tuples.append((m1, m2, m3))
+        self.match_tuples.reverse()
+
+    def find (self, i):
+        mmt = None
+        for mt in self.match_tuples:
+            logging.debug ('checking %s against %s %s', i, str(mt), infile)
+            if mt[1] is None:
+                logging.debug ('checking %d >= %d', i, mt[0])
+                if i >= mt[0]:
+                    mmt = mt
+                    break
+            else:
+                logging.debug ('checking %d >= %d & <= %d', i, mt[0], mt[1])
+                if i >= mt[0] and i <= mt[1]:
+                    mmt = mt
+                    break
+        return mmt
+
 def is_valid_directory(parser, arg):
     arg = os.path.abspath(arg)
     if not os.path.exists(arg):
@@ -42,6 +81,9 @@ if __name__ == '__main__':
     parser.add_argument('--resize-directory', help='resize directory', type = lambda x : is_valid_directory(parser, x))
     parser.add_argument('--filter-file', required=True, help='filter file', type = lambda x : is_existing_file(parser, x))
     parser.add_argument('--script', required=True, help='file to put shell script into')
+    parser.add_argument('--timestamp', action='store_true', help='Add a timestamp to the output frames')
+    parser.add_argument('--start', help='First date to convert')
+    parser.add_argument('--end', help='Last date to convert')
 
     parser.add_argument('--verbose', action='count', help='crank up logging')
 
@@ -64,29 +106,7 @@ if __name__ == '__main__':
             logging.critical ('--symlink-directory %s is not empty', args.symlink_directory)
             sys.exit(1)
 
-    match_tuples = []
-    with open(args.filter_file, 'r') as ff:
-        for line in ff:
-            line = re.sub (r'#.*$', '', line.strip())
-            line = re.sub('\s', '', line)
-            if line != '':
-                m = re.search (r'[^0123456789-]', line)
-                if m:
-                    logging.warn ('bad character "%s" in filter file line "%s"', m.group(0), line)
-                    continue
-                m = re.match (r'^(\d+)(-?)(\d*)$', line)
-                if not m:
-                    logging.critical ('trouble picking the numbers out of "%s"', line)
-                    sys.exit(1)
-                else:
-                    print line
-                    m1 = m2 = int(m.group(1))
-                    if m.group(2) != '':
-                        if m.group(3) == '':
-                            m2 = None
-                        else:
-                            m2 = int(m.group(3))
-                    match_tuples.append((m1, m2))
+    frame_filter = FrameSelector(args.filter_file)
 
     sf = None
     if args.script:
@@ -101,24 +121,16 @@ if __name__ == '__main__':
         else:
             i = int(m.group(1))
             d = m.group(2)
+            if args.start and d < args.start:
+                continue
+            if args.end and d > args.end:
+                continue
             h = m.group(3)
             m = m.group(4)
-            mmt = None
-            for mt in match_tuples:
-                logging.debug ('checking %s against %s %s', i, str(mt), infile)
-                if mt[1] is None:
-                    logging.debug ('checking %d >= %d', i, mt[0])
-                    if i >= mt[0]:
-                        mmt = mt
-                        break
-                else:
-                    logging.debug ('checking %d >= %d & <= %d', i, mt[0], mt[1])
-                    if i >= mt[0] and i <= mt[1]:
-                        mmt = mt
-                        break
+            mmt = frame_filter.find(i)
             if mmt is not None:
                 inpath = os.path.join(args.input_directory, infile)
-                logging.info ('%s matched %s', inpath, str(mmt))
+                logging.debug ('%s matched %s', inpath, str(mmt))
                 if args.symlink_directory:
                     os.symlink (inpath, os.path.join(args.symlink_directory, infile))
                 if args.resize_directory:
@@ -132,7 +144,7 @@ if __name__ == '__main__':
                     outfilename = os.path.join(args.resize_directory, infile);
                     outfilename = os.path.splitext(outfilename)[0] + '.png'
                     if os.path.exists(outfilename):
-                        logging.info ('%s already exists, skipping conversion', outfilename)
+                        logging.debug ('%s already exists, skipping conversion', outfilename)
                     else:
                         date_legend = '" ' + d[:4] + '.' + d[4:6] + '.' + d[6:] + ' "'
                         undercolor = '"#00000080"'
@@ -145,11 +157,11 @@ if __name__ == '__main__':
                             '-pointsize', '36', 
                             '-gravity', 'SouthWest', '-annotate', '+0+5', '{:05d}'.format(i), 
                         ]
-                        if ts is not None:
+                        if args.timestamp and ts is not None:
                             cmd.extend([ '-gravity', 'SouthEast', '-annotate', '+0+5', ts ])
                         cmd.append(outfilename)
                         sf.write(' '.join(cmd))
                         sf.write('\n')
 
             else:
-                logging.info ('%s no match', infile)
+                logging.debug ('%s no match', infile)
