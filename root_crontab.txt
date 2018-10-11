@@ -24,8 +24,10 @@
 @reboot $HOME/wakeup_enable.py
 # reboot hourly to make sure camera is ok
 31 * * * * $HOME/cron_reboot.sh
-# shutdown at 1800 on weekdays
-2 18 * * 1-5 $HOME/cron_shutdown.sh
+# shutdown at 1800 on m, w-f
+2 18 * * 1,3,4,5 $HOME/cron_shutdown.sh
+# shutdown at 2100 on tu
+32 21 * * 2 $HOME/cron_shutdown.sh
 # shutdown at 1200 on sat
 2 12 * * 6 $HOME/cron_shutdown.sh
 # shutdown at 0700 on sun
