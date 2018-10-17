@@ -1,0 +1,8 @@
+{
+	"layout": "vertical",
+	"buttons": [
+		{ "text": "Fetch from camera" , "cmd": "fetch.sh" },
+		{ "text": "Push to synology", "cmd": "push.sh" },
+		{ "text": "Exit to shell", "cmd": "exit" }
+	]
+}

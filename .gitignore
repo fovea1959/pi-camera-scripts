@@ -1,6 +1,7 @@
 *.mpg
 *.avi
 *.mkv
+*.log
 o/
 resized/
 weekly/
