@@ -1,8 +1,8 @@
 {
 	"layout": "vertical",
 	"buttons": [
-		{ "text": "Fetch from camera" , "cmd": "fetch.sh" },
-		{ "text": "Push to synology", "cmd": "push.sh", "style": "f" },
+		{ "text": "Fetch from camera" , "cmd": "fetch_from_camera.sh" },
+		{ "text": "Push to synology", "cmd": "push_to_server.sh", "style": "f" },
 		{ "text": "Exit", "cmd": "exit" }
 	],
 	"styles": {
