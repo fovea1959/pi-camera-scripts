@@ -2,8 +2,8 @@
 	"layout": "2d",
 	"buttons": [
 		{ "text": "iwconfig" , "cmd": "iwconfig", "style": "mono" },
-		{ "text": "Fetch" , "cmd": "./fetch.sh" },
-		{ "text": "Push", "cmd": "./push.sh" },
+		{ "text": "Fetch" , "cmd": "./fetch_from_camera.sh" },
+		{ "text": "Push", "cmd": "./push_to_server.sh" },
 		{ "text": "Exit", "cmd": "exit", "style": "p" }
 	],
 	"styles": {

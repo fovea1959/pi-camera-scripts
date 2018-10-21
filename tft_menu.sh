@@ -9,9 +9,8 @@ cd $SCRIPTPATH
 
 errors=0
 
-reset
-
 while true; do
+ reset
 
  cmd=`tft-menu.py fetchpush_menu.json 2> tft-menu.log`
  rv=$?
