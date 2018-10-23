@@ -24,7 +24,7 @@ while true; do
   break
  fi
 
- ./$cmd
+ $cmd
 
  echo touch screen to continue
  tft-dump-events.py -1

@@ -1,15 +1,21 @@
 {
-	"layout": "vertical",
+	"layout": "2d",
 	"buttons": [
-		{ "text": "Fetch from camera" , "cmd": "fetch_from_camera.sh" },
-		{ "text": "Push to synology", "cmd": "push_to_server.sh", "style": "f" },
-		{ "text": "Exit", "cmd": "exit" }
+		{ "text": "iwconfig" , "cmd": "iwconfig", "style": "mono" },
+		{ "text": "Fetch" , "cmd": "./fetch.sh" },
+		{ "text": "Push", "cmd": "./push.sh" },
+		{ "text": "Exit", "cmd": "exit", "style": "p" }
 	],
 	"styles": {
-		"f": {
-	       		"normal": {"color": "#808080"},
-	       		"hover": {"color": "#909090"},
-	       		"down": {"color": "#c0c0c0"}
+		"mono": {
+			"normal": {"color": "#808080"},
+			"hover": {"color": "#909090"},
+			"down": {"color": "#c0c0c0"}
+		},
+		"p": {
+	       		"normal": {"color": "#ff0000"},
+	       		"hover": {"color": "#00ff00"},
+	       		"down": {"color": "#0000ff"}
 		}
 	}
 }
