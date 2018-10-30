@@ -1,7 +1,7 @@
 {
 	"layout": "2d",
 	"buttons": [
-		{ "text": "iwconfig" , "cmd": "iwconfig", "style": "mono" },
+		{ "text": "iwconfig" , "cmd": "iwconfig wlan0", "style": "mono" },
 		{ "text": "Fetch" , "cmd": "./fetch_from_camera.sh" },
 		{ "text": "Push", "cmd": "./push_to_server.sh" },
 		{ "text": "Exit", "cmd": "exit", "style": "p" }
