@@ -2,6 +2,7 @@
 *.avi
 *.mkv
 *.log
+*.pyc
 o/
 resized/
 weekly/
