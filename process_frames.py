@@ -113,8 +113,8 @@ if __name__ == '__main__':
                         undercolor = '"#00000080"'
                         cmd = [
                             'convert', inpath, 
-                            #'-resize', '1280x720', 
-                            '-resize', '640x360', 
+                            '-resize', '1280x720', 
+                            #'-resize', '640x360', 
                             '-fill',  'white',   '-undercolor',  undercolor , 
                             '-pointsize', '72', 
                             '-gravity', 'South', '-annotate', '+0+5', date_legend, 
